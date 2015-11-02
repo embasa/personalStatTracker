@@ -1,0 +1,45 @@
+**summoner*******														
+  [summonerID]   <--------- gotten from summoner name which is given
+  summonerName   <--------- save to associate key with
+
+**summonerGames**
+  summonerID     <--------- from ParticipantIdentity
+  gameID         <--------- from matchDetail
+  team           <--------- from ParticipantStats
+
+**gameStats*****
+  gameID         <--------- from matchDetail
+  matchCreation  <--------- from matchDetail   
+  matchDuration  <--------- from matchDetail
+  winningTeamCode<--------- from Team from MatchDetail
+
+**GameChampions*
+  summonerID     <--------- from ParticipantIdentity
+  gameID         <--------- from matchDetail
+  championID     <--------- from participant
+  kills			 <--------- from participantStats
+  deaths		 <--------- from participantStats
+  assists		 <--------- from participantStats
+  gold  		 <--------- from participantStats
+
+**SummonerRankingDurintMatch**
+  summonerID
+  gameID
+  LP
+  division
+  tier
+  
+----------------------------
+  !summonerID
+  !summonerName
+  !teamCode
+  !championID
+  !kills
+  !deaths
+  !assists
+  !gold
+
+  !matchCreation
+  !matchDuration
+  !winningTeamCode
+  !gameID

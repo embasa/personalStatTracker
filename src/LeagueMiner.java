@@ -2,6 +2,8 @@ import constant.QueueType;
 import constant.Region;
 import constant.Season;
 import dto.Champion.Champion;
+import dto.League.League;
+import dto.League.LeagueEntry;
 import dto.Match.*;
 import dto.MatchList.MatchList;
 import dto.MatchList.MatchReference;
@@ -58,10 +60,33 @@ public class LeagueMiner {
   public void getUpdatedMatchLists() {
     MatchList matchList = null;
     List< MatchReference > matches;
-
+    List< League > summonerLeagues;
+    List< LeagueEntry > leagueEntries;
     for ( int i = 0; i < summonerNamesToMonitor.size(); i++ ) {
+
       try {
-        matchList = keyChain.getMatchList( keyChain.getSummonerByName( summonerNamesToMonitor.get( i ) ).getId() );
+        System.out.println( "BLAH" );
+        long summonerID = keyChain.getSummonerByName( summonerNamesToMonitor.get( i ) ).getId();
+        matchList = keyChain.getMatchList( summonerID );
+
+        summonerLeagues = keyChain.getLeagueBySummoner( summonerID );
+        System.out.println( "summoner League:" + summonerLeagues.size() );
+        int one = 0;
+        for ( League league : summonerLeagues ) {
+          System.out.println( league.getTier() );
+          leagueEntries = league.getEntries();
+          System.out.println( leagueEntries.size() );
+          if ( "RANKED_SOLO_5x5".equals( league.getQueue() ) ) {
+            for ( LeagueEntry leagueEntry : leagueEntries ) {
+              if ( Integer.parseInt( leagueEntry.getPlayerOrTeamId() ) == summonerID ) {
+                System.out.println( one + " found: " + summonerNamesToMonitor.get( i ) );
+                System.out.println( "div: " + leagueEntry.getDivision() + " " + leagueEntry.getLeaguePoints()
+                    + " " );
+              }
+              one++;
+            }
+          }
+        }
       } catch ( RiotApiException rl ) {
 
         if ( rl.getErrorCode() == RiotApiException.RATE_LIMITED ) {
@@ -73,7 +98,11 @@ public class LeagueMiner {
           i--;
           System.out.println( "RATE_LIMIT" );
         }
+      } catch ( NullPointerException e ) {
+        System.out.println( "NULL POINTER" );
+        // do nothing
       }
+
       if ( matchList != null ) {
         matches = matchList.getMatches();
         if ( matches != null ) {
@@ -123,6 +152,8 @@ public class LeagueMiner {
 
     List< ParticipantIdentity > identityList = match.getParticipantIdentities();
     List< Participant > participantList = match.getParticipants();
+    List< League > summonerLeagues = null;
+    List< LeagueEntry > leagueEntries;
     System.out.println( "match ID: " + match.getMatchId() );
 
     SummonerMatchEntry entry;
@@ -133,17 +164,53 @@ public class LeagueMiner {
       Participant participant = participantList.get( i );
       Player player = identityList.get( i ).getPlayer();
       ParticipantStats participantStats = participantList.get( i ).getStats();
-      System.out.printf( "%-12d%25s%10d%10d%10d%10d%12d%10d%20d%10d%40s%10d%n", player.getSummonerId(),
-          player.getSummonerName(), participantList.get( i ).getChampionId(), participantStats.getKills(),
-          participantStats.getDeaths(), participantStats.getAssists(), participantStats.getGoldSpent(),
-          participantList.get( i ).getTeamId(), matchID, winningTeamCode, ( new Date( matchCreation ) ).toString(), matchDuration );
 
+      long summonerID = player.getSummonerId();
+      String tier = null;
+      String division = null;
+      int leaguePoints = 0;
+      try {
+        summonerLeagues = keyChain.getLeagueBySummoner( summonerID );
+      } catch ( RiotApiException rl ) {
+
+        if ( rl.getErrorCode() == RiotApiException.RATE_LIMITED ) {
+          try {
+            Thread.sleep( 1000 );
+          } catch ( InterruptedException ie ) {
+            ie.printStackTrace();
+          }
+          i--;
+          System.out.println( "RATE_LIMIT" );
+        }
+      }
+      //System.out.println( "summoner League:" + summonerLeagues.size() );
+      if ( summonerLeagues != null )
+        for ( League league : summonerLeagues ) {
+          if ( "RANKED_SOLO_5x5".equals( league.getQueue() ) ) {
+            leagueEntries = league.getEntries();
+            //System.out.println( leagueEntries.size() );
+            System.out.println( league.getTier() );
+            tier = league.getTier();
+            for ( LeagueEntry leagueEntry : leagueEntries ) {
+              if ( Integer.parseInt( leagueEntry.getPlayerOrTeamId() ) == summonerID ) {
+                leaguePoints = leagueEntry.getLeaguePoints();
+                division = leagueEntry.getDivision();
+                //System.out.println( "div: " + leagueEntry.getDivision() + " " + leagueEntry.getLeaguePoints()
+                 //   + " " );
+              }
+            }
+          }
+        }
       entry = new SummonerMatchEntry( player.getSummonerId(),
           player.getSummonerName(), participantList.get( i ).getChampionId(), participantStats.getKills(),
           participantStats.getDeaths(), participantStats.getAssists(), participantStats.getGoldSpent(),
           participantList.get( i ).getTeamId(), matchID, winningTeamCode, matchCreation, matchDuration );
+
+      System.out.printf( "%-12d%25s%10d%10d%10d%10d%12d%10d%20d%10d%40s%10d%n", player.getSummonerId(),
+          player.getSummonerName(), participant.getChampionId(), participantStats.getKills(),
+          participantStats.getDeaths(), participantStats.getAssists(), participantStats.getGoldSpent(),
+          participant.getTeamId(), matchID, winningTeamCode, ( new Date( matchCreation ) ).toString(), matchDuration );
+
     }
-
-
   }
 }

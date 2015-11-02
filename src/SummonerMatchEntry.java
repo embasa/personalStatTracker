@@ -18,6 +18,10 @@ public class SummonerMatchEntry {
   private long deaths;
   private long assists;
   private long gold;
+  private String tier;
+  private String division;
+  private int leaguePoints;
+
 
 
   public SummonerMatchEntry( long summonerID, String summonerName, int championID,
