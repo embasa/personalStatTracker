@@ -23,23 +23,29 @@
   gold  		 <--------- from participantStats
 
 **SummonerRankingDurintMatch**
-  summonerID
-  gameID
-  LP
-  division
-  tier
+  summonerID     <--------- 
+  gameID         <---------
+  LP             <---------
+  division       <---------
+  tier           <---------
   
 ----------------------------
-  !summonerID
-  !summonerName
-  !teamCode
-  !championID
-  !kills
-  !deaths
-  !assists
-  !gold
+  long summonerID
+  str summonerName
+  str tier
+  str division
+  int LP
 
-  !matchCreation
-  !matchDuration
-  !winningTeamCode
-  !gameID
+  long gameID
+  int teamCode
+  int championID
+  int kills
+  int deaths
+  int assists
+  int gold
+
+  long matchCreation
+  long matchDuration
+  int winningTeamCode
+  
+  
