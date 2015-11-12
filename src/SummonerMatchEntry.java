@@ -3,6 +3,7 @@ import dto.Match.ParticipantIdentity;
 import java.util.List;
 
 /**
+ * Blah mo blah moo blah moo blah mo
  * Created by bruno on 10/29/15.
  */
 public class SummonerMatchEntry {
