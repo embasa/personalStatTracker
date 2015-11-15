@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/irc/irc.iml" filepath="$PROJECT_DIR$/irc/irc.iml" />
       <module fileurl="file://$PROJECT_DIR$/riotAPI/mysql-connector-java-5.1.36/mysql-connector-java-5.1.36.iml" filepath="$PROJECT_DIR$/riotAPI/mysql-connector-java-5.1.36/mysql-connector-java-5.1.36.iml" />
       <module fileurl="file://$PROJECT_DIR$/personalStatTracker.iml" filepath="$PROJECT_DIR$/personalStatTracker.iml" />
     </modules>

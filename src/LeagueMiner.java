@@ -10,54 +10,42 @@ import dto.MatchList.MatchReference;
 import main.java.riotapi.RiotApi;
 import main.java.riotapi.RiotApiException;
 //import java.sql.
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 //import java.util.stream.CollectorVs;
 
 /**
  * Blah * Created by bruno on 10/13/15.
  */
-public class LeagueMiner {
-  private int maxEntry = 20;// get full matchLists of this mzny summoners
-  private int count = 0;// count of the number of summoners in list
+public class LeagueMiner implements Runnable {
+  private int count = 1000;// count of the number of summoners in list
   private RiotApi keyChain = null;
   private List<String> summonerNamesToMonitor = null;
-  private List<SummonerMatchEntry> entryList;
+
+  private  DatabaseManager databaseManager;
 
   public LeagueMiner(String key, List<String> summonerNames) {
+    this.databaseManager = new DatabaseManager();
     this.keyChain = new RiotApi(key);
     this.keyChain.setSeason(Season.CURRENT);
     if (summonerNames == null) {
       this.summonerNamesToMonitor = new ArrayList<>();
     } else {
       this.summonerNamesToMonitor = new ArrayList<>(summonerNames.size());
-    //  summonerNames.stream().collect(Collectors.<String>toList());
       this.summonerNamesToMonitor.addAll(summonerNames.stream().collect(Collectors.<String>toList()));
       System.out.println(this.summonerNamesToMonitor.size());
     }
   }
 
-  public LeagueMiner(String key) {
-    this(key, null);
-  }
-
-  public static void main(String[] args) throws InterruptedException, RiotApiException {
-    String summonerName = "zlig";
-    List<String> names = new ArrayList<>();
-    names.add("embasa");
-    names.add(summonerName);
-    LeagueMiner leagueMiner = new LeagueMiner("fdb891b5-2179-4de3-bb61-c9efcf41293e", names);
-    leagueMiner.getUpdatedMatchLists();
-    System.out.println("Goodbye!");
+  public void clearContent(){
+    this.databaseManager.clearTables();
   }
 
   /**
    * This method is invoked at the start of all ranked games
    */
   public void getUpdatedMatchLists() {
+
     MatchList matchList = null;
     List<MatchReference> matches;
     for (int i = 0; i < summonerNamesToMonitor.size(); i++) {
@@ -65,7 +53,7 @@ public class LeagueMiner {
         long summonerID = keyChain.getSummonerByName(summonerNamesToMonitor.get(i)).getId();
         matchList = keyChain.getMatchList(summonerID);
       } catch (RiotApiException rl) {
-        i = handleRiotApiExceptionInForLoop(rl);
+        i += handleRiotApiExceptionInForLoop(rl);
         matchList = null;
       } catch (NullPointerException e) {
         System.out.println("NULL POINTER");
@@ -74,11 +62,16 @@ public class LeagueMiner {
       if (matchList != null) {
         matches = matchList.getMatches();
         if (matches != null) {
+          System.out.println(matches.size());
+          Set<MatchReference> set = new HashSet<>(matches);
+          System.out.println(set.size());
           for (int j = 0; j < matches.size(); j++) {
+
+            System.out.println(":" + j);
             try {
               parseMatch(keyChain.getMatch(Region.NA, matches.get(j).getMatchId()));
             } catch (RiotApiException ee) {
-              j = handleRiotApiExceptionInForLoop(ee);
+              j += handleRiotApiExceptionInForLoop(ee);
             }
           }
         }
@@ -147,7 +140,6 @@ public class LeagueMiner {
   }
 
   public void parseMatch(MatchDetail match) {
-    int spacing = 50;
     System.out.print("queuetype: " + match.getQueueType() + "\n");
     if (!match.getQueueType().equals("RANKED_SOLO_5x5")) {
       return;
@@ -185,13 +177,12 @@ public class LeagueMiner {
           entry.getWinningTeamCode(), entry.getGameID(), (new Date(entry.getMatchCreation())).toString(),
           entry.getMatchDuration());
 
-      /* counting spacing */
-      count++;
-      if (count == spacing) {
-        count = 0;
-        this.maxEntry--;
-        if (maxEntry > 0)
-          this.summonerNamesToMonitor.add(entry.getSummonerName());
+      //this.entryList.add(entry);
+      this.databaseManager.addSummonerMatchEntry(entry);
+      if (count > 0) {
+        count--;
+      }else {
+        this.summonerNamesToMonitor.add(entry.getSummonerName());
       }
     }
   }
@@ -207,5 +198,10 @@ public class LeagueMiner {
       return -1;
     }
     return 0;
+  }
+
+  @Override
+  public void run() {
+    this.getUpdatedMatchLists();
   }
 }

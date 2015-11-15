@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="4137959291">
+  <component name="DataSourceManagerImpl" format="xml" hash="645821477">
     <data-source source="LOCAL" name="MySQL - leagueData@localhost" uuid="9576151e-26b0-42eb-a55c-fc8f53d5b10f">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
