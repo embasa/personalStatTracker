@@ -10,6 +10,49 @@ import java.sql.*;
 
 public class DatabaseManager
 {
+
+  private void createTables(){
+    Statement statement;
+    try {
+      statement = this.conn.createStatement();
+      String dropSummonerGameTable = "DROP TABLE IF EXISTS summonerGames";
+      String dropSummonerTable = "DROP TABLE IF EXISTS summoner";
+      String dropGameStatsTable = "DROP TABLE IF EXISTS gameStats";
+
+      statement.executeUpdate(dropSummonerGameTable);
+      statement.executeUpdate(dropSummonerTable);
+      statement.executeUpdate(dropGameStatsTable);
+
+
+      String summonerGameTable = "CREATE TABLE IF NOT EXISTS summonerGames(" +
+          "summonerID BIGINT NOT NULL, gameID BIGINT NOT NULL, " +
+          "teamCode INT,championID INT, kills BIGINT, deaths BIGINT, assists BIGINT, gold BIGINT," +
+          "leaguePoints INT,division VARCHAR(255),tier VARCHAR(255)," +
+          "PRIMARY KEY(summonerID,gameID)," +
+          "CONSTRAINT FOREIGN KEY (summonerID) REFERENCES summoner(summonerID)," +
+          "CONSTRAINT FOREIGN KEY (gameID) REFERENCES gameStats(gameID))" ;
+
+      String summonerTable = "CREATE TABLE IF NOT EXISTS summoner(" +
+          "summonerID BIGINT NOT NULL, summonerName VARCHAR(255) NOT NULL," +
+          "PRIMARY KEY(summonerID))";
+
+      String gameStatsTable = "CREATE TABLE IF NOT EXISTS gameStats(" +
+          "gameID BIGINT NOT NULL," +
+          "dateCreated BIGINT NOT NULL," +
+          "timePlayed BIGINT NOT NULL ," +
+          "winner INT NOT NULL," +
+          "PRIMARY KEY(gameID))";
+
+
+      statement.executeUpdate(summonerTable);
+      statement.executeUpdate(gameStatsTable);
+      statement.executeUpdate(summonerGameTable);
+      statement.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
   public boolean addSummonerMatchEntry(SummonerMatchEntry entry){
     try {
       String gameStats = "INSERT INTO gameStats(gameID,dateCreated,timePlayed,winner) values (?,?,?,?)";
@@ -25,6 +68,7 @@ public class DatabaseManager
       //System.out.println("g: " + stmt.executeUpdate());
       stmt.executeUpdate();
       }catch (MySQLIntegrityConstraintViolationException e){
+
       }
 
       stmt.clearParameters();
@@ -67,7 +111,7 @@ public class DatabaseManager
       Class.forName(JDBC_DRIVER);
       System.out.println("Connecting to database...");
       this.conn = DriverManager.getConnection(DB_URL, USER, PASS);
-      this.clearTables();
+      this.createTables();
     }catch (SQLException | ClassNotFoundException e){
       e.printStackTrace();
     }
@@ -78,11 +122,13 @@ public class DatabaseManager
       statement.executeUpdate("DELETE FROM summonerGames");
       statement.executeUpdate("DELETE FROM gameStats");
       statement.executeUpdate("DELETE FROM summoner");
+      statement.close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
 
   }
+
 
   private Connection conn;
   private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";

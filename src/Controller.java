@@ -13,8 +13,8 @@ public class Controller {
     System.out.println("main");
     //leagueMiner.clearContent();
     long start = System.currentTimeMillis();
-    System.out.println("end: " + ((System.currentTimeMillis() - start)/60000));
     leagueMiner.getUpdatedMatchLists();
+    System.out.println("end: " + ((System.currentTimeMillis() - start)/60000));
     //Thread thread = new Thread(leagueMiner);
     //thread.start();
   }
