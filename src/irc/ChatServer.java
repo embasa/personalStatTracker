@@ -1,3 +1,4 @@
+package irc;
 import java.io.IOException;
 import java.net.ServerSocket;
 

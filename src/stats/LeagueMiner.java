@@ -1,28 +1,29 @@
+package stats;
+
 import constant.Region;
 import constant.Season;
-import dto.Game.*;
 import dto.League.League;
 import dto.League.LeagueEntry;
 import dto.Match.*;
-import dto.Match.Player;
 import dto.MatchList.MatchList;
 import dto.MatchList.MatchReference;
 import main.java.riotapi.RiotApi;
 import main.java.riotapi.RiotApiException;
-//import java.sql.
+import stats.DatabaseManager;
+import stats.SummonerMatchEntry;
+
 import java.util.*;
 import java.util.stream.Collectors;
-//import java.util.stream.CollectorVs;
+
 
 /**
  * Blah * Created by bruno on 10/13/15.
  */
 public class LeagueMiner implements Runnable {
-  private int count = 1000;// count of the number of summoners in list
   private RiotApi keyChain = null;
   private List<String> summonerNamesToMonitor = null;
 
-  private  DatabaseManager databaseManager;
+  private DatabaseManager databaseManager;
 
   public LeagueMiner(String key, List<String> summonerNames) {
     this.databaseManager = new DatabaseManager();
@@ -49,11 +50,21 @@ public class LeagueMiner implements Runnable {
     MatchList matchList = null;
     List<MatchReference> matches;
     for (int i = 0; i < summonerNamesToMonitor.size(); i++) {
+      System.out.println("blah");
       try {
+        this.waitForAMoment();
         long summonerID = keyChain.getSummonerByName(summonerNamesToMonitor.get(i)).getId();
+        this.waitForAMoment();
         matchList = keyChain.getMatchList(summonerID);
       } catch (RiotApiException rl) {
+        if(rl.getErrorCode() == RiotApiException.RATE_LIMITED){
+          rl.printStackTrace();
+        }
+        System.out.println("error #: " + rl.getErrorCode());
         i += handleRiotApiExceptionInForLoop(rl);
+        if(rl.getErrorCode() == RiotApiException.FORBIDDEN){
+          System.out.println("shit is blocked!!");
+        }
         matchList = null;
       } catch (NullPointerException e) {
         System.out.println("NULL POINTER");
@@ -69,6 +80,7 @@ public class LeagueMiner implements Runnable {
 
             System.out.println(":" + j);
             try {
+              this.waitForAMoment();
               parseMatch(keyChain.getMatch(Region.NA, matches.get(j).getMatchId()));
             } catch (RiotApiException ee) {
               j += handleRiotApiExceptionInForLoop(ee);
@@ -107,10 +119,14 @@ public class LeagueMiner implements Runnable {
    */
   private List<League> getLeagueBySummoner(long summonerID) {
     try {
+      this.waitForAMoment();
       return keyChain.getLeagueBySummoner(summonerID);
+
     } catch (RiotApiException rl) {
-      handleRiotApiExceptionInForLoop(rl);
-      if (rl.getErrorCode() != RiotApiException.RATE_LIMITED) {
+      if(rl.getErrorCode() == RiotApiException.RATE_LIMITED){
+        rl.printStackTrace();
+      }else{
+        handleRiotApiExceptionInForLoop(rl);
         return null;
       }
       return getLeagueBySummoner(summonerID);
@@ -179,18 +195,13 @@ public class LeagueMiner implements Runnable {
 
       //this.entryList.add(entry);
       this.databaseManager.addSummonerMatchEntry(entry);
-      if (count > 0) {
-        count--;
-      }else {
-        this.summonerNamesToMonitor.add(entry.getSummonerName());
-      }
     }
   }
 
   private int handleRiotApiExceptionInForLoop(RiotApiException e) {
     if (e.getErrorCode() == RiotApiException.RATE_LIMITED) {
       try {
-        Thread.sleep(1000);
+        Thread.sleep(10000);
       } catch (InterruptedException ie) {
         ie.printStackTrace();
       }
@@ -200,8 +211,20 @@ public class LeagueMiner implements Runnable {
     return 0;
   }
 
+  private void waitForAMoment(){
+    try {
+      Thread.sleep(1250);// 500 per 10 minutes limit. 60000ms/1250ms = 480 per 10 minutes
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+
   @Override
   public void run() {
     this.getUpdatedMatchLists();
+  }
+
+  public void getChampionNames(){
+
   }
 }

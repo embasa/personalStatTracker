@@ -1,3 +1,5 @@
+package stats;
+
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import java.sql.*;
@@ -15,14 +17,16 @@ public class DatabaseManager
     Statement statement;
     try {
       statement = this.conn.createStatement();
+      /*
       String dropSummonerGameTable = "DROP TABLE IF EXISTS summonerGames";
       String dropSummonerTable = "DROP TABLE IF EXISTS summoner";
       String dropGameStatsTable = "DROP TABLE IF EXISTS gameStats";
 
       statement.executeUpdate(dropSummonerGameTable);
       statement.executeUpdate(dropSummonerTable);
-      statement.executeUpdate(dropGameStatsTable);
 
+      */
+      statement.executeUpdate("DROP TABLE IF EXISTS gameChampions");
 
       String summonerGameTable = "CREATE TABLE IF NOT EXISTS summonerGames(" +
           "summonerID BIGINT NOT NULL, gameID BIGINT NOT NULL, " +

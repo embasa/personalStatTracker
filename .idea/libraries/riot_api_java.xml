@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="gson-2.4">
+  <library name="riot-api-java">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/riotAPI/gson-2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/riotAPI/riot-api-java.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

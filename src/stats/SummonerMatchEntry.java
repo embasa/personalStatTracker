@@ -1,9 +1,8 @@
-import dto.Match.ParticipantIdentity;
-
-import java.util.List;
+package stats;
 
 /**
- * Blah mo blah moo blah moo blah mo
+ * Data Object for passing summoner entries between
+ * stats.LeagueMiner and stats.DatabaseManager
  * Created by bruno on 10/29/15.
  */
 public class SummonerMatchEntry {
@@ -24,9 +23,9 @@ public class SummonerMatchEntry {
   private int leaguePoints;
 
 
-  public SummonerMatchEntry(long summonerID, String summonerName,String tier, String division, int leaguePoints,
-                            long gameID, int teamCode, int championID,long kills, long deaths, long assists,
-                            long gold,int winningTeamCode, long matchCreation, long matchDuration){
+  public SummonerMatchEntry(long summonerID, String summonerName, String tier, String division, int leaguePoints,
+                            long gameID, int teamCode, int championID, long kills, long deaths, long assists,
+                            long gold, int winningTeamCode, long matchCreation, long matchDuration){
     /* summoner information */
     this.summonerID = summonerID;
     this.summonerName = summonerName;
@@ -50,8 +49,8 @@ public class SummonerMatchEntry {
   }
 
   public SummonerMatchEntry(long summonerID, String summonerName,
-                            long gameID, int teamCode, int championID,long kills, long deaths, long assists,
-                            long gold,int winningTeamCode, long matchCreation, long matchDuration){
+                            long gameID, int teamCode, int championID, long kills, long deaths, long assists,
+                            long gold, int winningTeamCode, long matchCreation, long matchDuration){
     this(summonerID,summonerName,null,null,0,gameID,teamCode,championID,kills,deaths,assists,
         gold,winningTeamCode,matchCreation,matchDuration);
   }
