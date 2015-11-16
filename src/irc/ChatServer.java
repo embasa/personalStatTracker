@@ -7,8 +7,20 @@ import java.net.ServerSocket;
  * Created by bruno on 11/12/15.
  */
 public class ChatServer {
+  private final int LISTENING_PORT = 2002;
+  public ChatServer(){
+
+  }
   public static void main(String[] args) throws IOException{
-    //System.out.println("blah bitch");
-    ServerSocket serverSocket = new ServerSocket();
+
+  }
+
+  public void startServer(){
+    try (ServerSocket serverSocket = new ServerSocket(LISTENING_PORT)) {
+
+    }catch (IOException e){
+      e.printStackTrace();
+    }
+
   }
 }

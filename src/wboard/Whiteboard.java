@@ -17,6 +17,7 @@ import java.awt.*;
 public class Whiteboard extends JFrame{
   public Whiteboard(){
     super("whiteboard");
+    this.setBackground(Color.cyan);
     this.setLayout(new BorderLayout());
     JPanel rootPanel = new JPanel(new FlowLayout());
 
@@ -54,13 +55,12 @@ public class Whiteboard extends JFrame{
   private JPanel controlPane(){
     /* top left has 4 rows */
     JPanel topLeftPanel = new JPanel();
-    topLeftPanel.setBackground(Color.CYAN);
+    topLeftPanel.setBackground(Color.orange);
     Box parentBox = Box.createVerticalBox();
 
     /* add buttons */
     Box buttonBox = Box.createHorizontalBox();
     buttonBox.add(new JButton("row1"),Box.LEFT_ALIGNMENT);
-
     buttonBox.add(new JButton("row2"),Box.LEFT_ALIGNMENT);
     buttonBox.add(new JButton("row3"),Box.LEFT_ALIGNMENT);
     buttonBox.add(new JButton("row4"),Box.LEFT_ALIGNMENT);
@@ -102,9 +102,11 @@ public class Whiteboard extends JFrame{
     }
     JList<String> jList = new JList<>(list);
     JScrollPane rootPane = new JScrollPane(jList);
+    rootPane.setBackground(Color.MAGENTA);
     rootPane.setPreferredSize(new Dimension(400,400));
 
     JPanel panel = new JPanel();
+    panel.setBackground(Color.pink);
     panel.add(rootPane);
     return panel;
   }
