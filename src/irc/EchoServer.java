@@ -40,15 +40,10 @@ public class EchoServer {
       System.exit(1);
     }
 
-    int portNumber = 80;
+    int portNumber = 2304;
     //int portNumber = Integer.parseInt(args[0]);
 
-    byte[] bytes = new byte[4];
-    bytes[0] = 0;
-    bytes[1] = 0;
-    bytes[2] = 0;
-    bytes[3] = 0;
-    try (ServerSocket serverSocket = new ServerSocket(portNumber, 0, InetAddress.getByAddress(bytes))) {
+    try (ServerSocket serverSocket = new ServerSocket(portNumber, 40, InetAddress.getByName("192.168.5.101"))) {
       //serverSocket.bind(new InetSocketAddress("0.0.0.0",portNumber));
       System.out.println(serverSocket.getLocalPort());
       System.out.println(serverSocket.getLocalSocketAddress().toString());
