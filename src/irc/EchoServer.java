@@ -29,10 +29,72 @@ package irc;/*
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import javax.crypto.KeyGenerator;
 import java.net.*;
 import java.io.*;
+import java.security.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EchoServer {
+
+  private class ChatClient{
+    public String name = null;
+    public Socket socket = null;
+    public String key = null;
+
+  }
+
+  private PrivateKey privateKey;
+  public static PublicKey publicKey;
+  private List<ChatClient> clients;
+  public int port;
+  private ServerSocket serverSocket;
+  private List<String> chatText;
+
+
+  public EchoServer(int port) {
+    SecureRandom random = null;
+    KeyPairGenerator keyGen = null;
+    this.chatText = new ArrayList<>();
+    try {
+      keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
+      random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+    } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+      e.printStackTrace();
+    }
+    if (keyGen == null) throw new AssertionError();
+    keyGen.initialize(1024,random);
+    KeyPair keyPair = keyGen.generateKeyPair();
+    this.privateKey = keyPair.getPrivate();
+    publicKey = keyPair.getPublic();
+    this.port = port;
+
+    try {
+      this.serverSocket = new ServerSocket(this.port);
+      System.out.println(this.serverSocket.getLocalPort());
+      System.out.println(this.serverSocket.getLocalSocketAddress().toString());
+      System.out.println(this.serverSocket.getInetAddress().toString());
+      try (Socket clientSocket = this.serverSocket.accept()) {
+        try (PrintWriter out =
+                 new PrintWriter(clientSocket.getOutputStream(), true)) {
+          try (BufferedReader in = new BufferedReader(
+              new InputStreamReader(clientSocket.getInputStream()))) {
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+              System.out.println(inputLine);
+              out.println(inputLine);
+            }
+          }
+        }
+      }
+    } catch (IOException e) {
+      System.out.println("Exception caught when trying to listen on port "
+          + this.port + " or listening for a connection");
+      System.out.println(e.getMessage());
+    }
+  }
+
   public static void main(String[] args) throws IOException {
 
     if (args.length != 1) {
@@ -43,11 +105,9 @@ public class EchoServer {
     int portNumber = 2304;
     //int portNumber = Integer.parseInt(args[0]);
 
-    try (ServerSocket serverSocket = new ServerSocket(portNumber, 40, InetAddress.getByName("192.168.5.101"))) {
-      //serverSocket.bind(new InetSocketAddress("0.0.0.0",portNumber));
+    try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
       System.out.println(serverSocket.getLocalPort());
       System.out.println(serverSocket.getLocalSocketAddress().toString());
-      //System.out.println(serverSocket.getChannel());
       System.out.println(serverSocket.getInetAddress().toString());
       try (Socket clientSocket = serverSocket.accept()) {
         try (PrintWriter out =
@@ -56,6 +116,7 @@ public class EchoServer {
               new InputStreamReader(clientSocket.getInputStream()))) {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
+              System.out.println(inputLine);
               out.println(inputLine);
             }
           }

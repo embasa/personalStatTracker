@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="MySQL - leagueData@localhost" uuid="5d6271a8-06b1-4abe-af1f-da92f1d4d946">
+    <database-info product="MySQL" version="5.5.46-0ubuntu0.14.04.2" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact"/>
+    <database-model serializer="dbm" rdbms="MYSQL" format-version="2.2">
+      <schema id="1" name="leagueData"/>
+      <table id="2" parent="1" name="gameStats"/>
+      <table id="3" parent="1" name="summoner"/>
+      <table id="4" parent="1" name="summonerGames"/>
+      <column id="5" parent="2" name="gameID">
+        <mandatory>1</mandatory>
+        <data-type>bigint(20)</data-type>
+      </column>
+      <column id="6" parent="2" name="dateCreated">
+        <mandatory>1</mandatory>
+        <data-type>bigint(20)</data-type>
+      </column>
+      <column id="7" parent="2" name="timePlayed">
+        <mandatory>1</mandatory>
+        <data-type>bigint(20)</data-type>
+      </column>
+      <column id="8" parent="2" name="winner">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="9" parent="2" name="PRIMARY">
+        <columns>gameID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="10" parent="3" name="summonerID">
+        <mandatory>1</mandatory>
+        <data-type>bigint(20)</data-type>
+      </column>
+      <column id="11" parent="3" name="summonerName">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <key id="12" parent="3" name="PRIMARY">
+        <columns>summonerID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="13" parent="4" name="summonerID">
+        <mandatory>1</mandatory>
+        <data-type>bigint(20)</data-type>
+      </column>
+      <column id="14" parent="4" name="gameID">
+        <mandatory>1</mandatory>
+        <data-type>bigint(20)</data-type>
+      </column>
+      <column id="15" parent="4" name="teamCode">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="16" parent="4" name="championID">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="17" parent="4" name="kills">
+        <data-type>bigint(20)</data-type>
+      </column>
+      <column id="18" parent="4" name="deaths">
+        <data-type>bigint(20)</data-type>
+      </column>
+      <column id="19" parent="4" name="assists">
+        <data-type>bigint(20)</data-type>
+      </column>
+      <column id="20" parent="4" name="gold">
+        <data-type>bigint(20)</data-type>
+      </column>
+      <column id="21" parent="4" name="leaguePoints">
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="22" parent="4" name="division">
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="23" parent="4" name="tier">
+        <data-type>varchar(255)</data-type>
+      </column>
+      <key id="24" parent="4" name="PRIMARY">
+        <columns>summonerID
+gameID</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="25" parent="4" name="summonerGames_ibfk_1">
+        <columns>summonerID</columns>
+        <ref-key>summoner.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="26" parent="4" name="summonerGames_ibfk_2">
+        <columns>gameID</columns>
+        <ref-key>gameStats.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+    </database-model>
+  </data-source>
+  <data-source name="Sqlite (Xerial) - database.sqlite" uuid="1c26b966-711a-425a-a3f5-e478c622ecbc">
+    <database-info product="SQLite" version="3.8.9" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="native"/>
+    <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed"/>
+    <schema name="" catalog=""/>
+    <table name="userNames" schema="" catalog="" type="TABLE">
+      <column name="userName" sqlType="" precision="0" scale="-1" nullable="true" jdbcType="12"/>
+      <column name="password" sqlType="" precision="0" scale="-1" nullable="true" jdbcType="12"/>
+      <primary-key columns="username"/>
+    </table>
+  </data-source>
+</component>
